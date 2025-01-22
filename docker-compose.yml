@@ -1,0 +1,40 @@
+services:
+  app:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - DB_HOST=mysqldb
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=task_manager
+      - DB_PORT=3306
+      - PORT=4000
+    depends_on:
+      - mysqldb
+    networks:
+      - task_network
+
+  mysqldb:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: task_manager
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - task_network
+
+volumes:
+  mysql_data:
+
+networks:
+  task_network:
+    driver: bridge
